@@ -40,7 +40,9 @@ NONCOVID_VAL = NONCOVID_TEXT_LABELS / "noncovid_val_labels.txt"
 NONCOVID_TEST = NONCOVID_TEXT_LABELS / "noncovid_test_labels.txt"
 
 BATCH_SIZE = 8
-EPOCHS = 500
+EPOCHS = 100
+MODEL_NUM = 3
+
 
 INPUT_SIZE = (224, 224)
 
@@ -212,7 +214,7 @@ class ResnetTransferLearning(LightningModule):
         self.log('test_loss', loss)
 
     def configure_optimizers(self):
-        return optim.Adam(self.parameters(), lr=1e-3)
+        return optim.Adam(self.parameters(), lr=1e-4)
 
 
 """Generate dataloaders for bagging"""
@@ -291,5 +293,5 @@ if __name__ == "__main__":
     bag_train_loader = bagging_loader(trainset)
     bag_val_loader = bagging_loader(valset)
     # Compute the accuracy based on the 11 models
-    acc = bagging(11)
+    acc = bagging(MODEL_NUM)
     print("acc: ",acc)
