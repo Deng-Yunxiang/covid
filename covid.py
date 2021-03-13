@@ -14,7 +14,6 @@ from PIL import Image
 from pytorch_lightning import LightningModule
 from pytorch_lightning import loggers as pl_loggers
 from pytorch_lightning.callbacks import Callback, ModelCheckpoint
-from pytorch_lightning.metrics import Accuracy
 from torch import Tensor
 from torch.nn import BCEWithLogitsLoss
 
@@ -53,7 +52,6 @@ def read_text_labels(text_path: str) -> List[str]:
     txt_data = [line.strip() for line in lines]
     return txt_data
 
-# Define the CovidDataset
 class CovidDataset(Dataset):
     def __init__(self, root_dir, text_COVID, text_NonCOVID, transform):
         """
@@ -179,12 +177,7 @@ class ResnetTransferLearning(LightningModule):
         x, y = batch
         output = self(x)
         criterion = BCEWithLogitsLoss()
-        try:
-            loss = criterion(output.unsqueeze(1), y.unsqueeze(1).float())
-        except BaseException as e:
-
-            raise e
-
+        loss = criterion(output.unsqueeze(1), y.unsqueeze(1).float())  
         logits = torch.sigmoid(output)
         pred = torch.round(logits)
         acc = torch.mean((pred == y).float())
@@ -203,8 +196,6 @@ class ResnetTransferLearning(LightningModule):
         self.log('val_acc', acc, prog_bar=True)
         loss = criterion(output.unsqueeze(1), y.unsqueeze(1).float())
         self.log('val_loss', loss)
-        # self.valid_acc(logits, y)
-        # self.log('valid_acc', self.valid_acc, on_step=True, on_epoch=True)
 
         return loss
 
